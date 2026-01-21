@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 // Load .env from project root
 dotenv.config({ path: path.join(__dirname, '../.env') });
-const STATIC_DIR = path.join(__dirname, '../src/frontend/dist');
+const STATIC_DIR = path.join(process.cwd(), 'src/frontend/dist');
 const PORT = parseInt(process.env.PORT ?? '8000');
 
 if (!existsSync(STATIC_DIR)) {
