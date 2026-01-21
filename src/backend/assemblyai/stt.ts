@@ -117,6 +117,7 @@ export class AssemblyAISTT {
   }
 
   async close(): Promise<void> {
+    this._bufferIterator.cancel();
     if (this._connectionPromise) {
       const ws = await this._connectionPromise;
       ws.close();

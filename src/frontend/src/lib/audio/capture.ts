@@ -49,6 +49,7 @@ export function createAudioCapture(): AudioCapture {
   let audioContext: AudioContext | null = null;
   let workletNode: AudioWorkletNode | null = null;
   let mediaStream: MediaStream | null = null;
+  let sourceNode: MediaStreamAudioSourceNode | null = null;
 
   async function start(onChunk: (chunk: ArrayBuffer) => void): Promise<void> {
     // Create AudioContext if needed
@@ -75,17 +76,22 @@ export function createAudioCapture(): AudioCapture {
     });
 
     // Create worklet node and connect
-    const source = audioContext.createMediaStreamSource(mediaStream);
+    sourceNode = audioContext.createMediaStreamSource(mediaStream);
     workletNode = new AudioWorkletNode(audioContext, "pcm-processor");
 
     workletNode.port.onmessage = (event) => {
       onChunk(event.data);
     };
 
-    source.connect(workletNode);
+    sourceNode.connect(workletNode);
   }
 
   function stop(): void {
+    if (sourceNode) {
+      sourceNode.disconnect();
+      sourceNode = null;
+    }
+
     if (workletNode) {
       workletNode.disconnect();
       workletNode = null;
