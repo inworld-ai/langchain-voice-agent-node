@@ -24,7 +24,7 @@ A real-time voice-to-voice AI agent built with LangChain, AssemblyAI for speech-
 ### Step 1: Clone and Install
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/inworld-ai/langchain-voice-agent-node
 cd langchain-voice-agent-node
 npm install
 ```
