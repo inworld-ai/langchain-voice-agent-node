@@ -114,7 +114,7 @@ export class InworldTTS {
       throw new Error('Inworld API key is required');
     }
     this.voiceId = options.voiceId ?? 'Ashley';
-    this.modelId = options.modelId ?? 'inworld-tts-1';
+    this.modelId = options.modelId ?? 'inworld-tts-1.5-max';
     this.sampleRate = options.sampleRate ?? 24000;
   }
 

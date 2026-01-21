@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'node:url';
 import { existsSync } from 'node:fs';
 import { createAgent, AIMessage, ToolMessage } from 'langchain';
 import path from 'node:path';
@@ -20,11 +19,8 @@ import { INWORLD_TTS_SYSTEM_PROMPT, InworldTTS } from './inworld/index.js';
 import { AssemblyAISTT } from './assemblyai/index.js';
 import type { VoiceAgentEvent } from './types.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Load .env from project root
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 const STATIC_DIR = path.join(process.cwd(), 'src/frontend/dist');
 const PORT = parseInt(process.env.PORT ?? '8000');
 

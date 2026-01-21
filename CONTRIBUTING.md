@@ -1,6 +1,6 @@
-# Contributing to Inworld Template
+# Contributing to LangChain Voice Agent
 
-Thank you for your interest in contributing to the Inworld Template! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to the LangChain Voice Agent! This document provides guidelines and instructions for contributing.
 
 ## Getting Started
 
@@ -18,8 +18,8 @@ Thank you for your interest in contributing to the Inworld Template! This docume
 2. **Clone your fork**:
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/inworld-template.git
-   cd inworld-template
+   git clone https://github.com/YOUR_USERNAME/langchain-voice-agent-node.git
+   cd langchain-voice-agent-node
    ```
 
 3. **Install dependencies**:
@@ -159,7 +159,7 @@ For feature requests, please include:
 
 ## Questions?
 
-- **GitHub Issues**: [Open an issue](https://github.com/inworld/inworld-template/issues)
+- **GitHub Issues**: [Open an issue](https://github.com/YOUR_USERNAME/langchain-voice-agent-node/issues)
 
 ## License
 

@@ -32,9 +32,7 @@ export function createVoiceSession(): VoiceSession {
     switch (event.type) {
       case "stt_chunk":
         // Interruption handling: stop audio if user starts speaking
-        console.log("[interrupt check] isPlaying:", audioPlayback.isPlaying());
         if (audioPlayback.isPlaying()) {
-          console.log("[interrupt] stopping playback");
           audioPlayback.stop();
           logs.log("User interrupted - stopping playback");
         }
@@ -156,7 +154,6 @@ export function createVoiceSession(): VoiceSession {
 
     ws.onmessage = async (event) => {
       const eventData: ServerEvent = JSON.parse(event.data);
-      console.log(`[${eventData.type}]`, eventData.ts, eventData);
       handleEvent(eventData);
     };
 
