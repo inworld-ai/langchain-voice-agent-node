@@ -7,7 +7,7 @@ export interface InworldCreateMessage {
     voice_id: string;
     model_id: string;
     audio_config: {
-      audio_encoding: "LINEAR16";
+      audio_encoding: 'LINEAR16';
       sample_rate_hertz: number;
     };
   };

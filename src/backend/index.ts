@@ -1,32 +1,32 @@
-import dotenv from "dotenv";
-import { fileURLToPath } from "node:url";
-import { existsSync } from "node:fs";
-import { createAgent, AIMessage, ToolMessage } from "langchain";
-import path from "node:path";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { serveStatic } from "@hono/node-server/serve-static";
-import { cors } from "hono/cors";
-import { createNodeWebSocket } from "@hono/node-ws";
-import type { WSContext } from "hono/ws";
-import type WebSocket from "ws";
-import { iife, writableIterator } from "./utils.js";
-import { MemorySaver } from "@langchain/langgraph";
-import { HumanMessage } from "@langchain/core/messages";
-import { tool } from "@langchain/core/tools";
-import { z } from "zod";
-import { v4 as uuidv4 } from "uuid";
-import { INWORLD_TTS_SYSTEM_PROMPT, InworldTTS } from "./inworld/index.js";
-import { AssemblyAISTT } from "./assemblyai/index.js";
-import type { VoiceAgentEvent } from "./types.js";
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
+import { createAgent, AIMessage, ToolMessage } from 'langchain';
+import path from 'node:path';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
+import { cors } from 'hono/cors';
+import { createNodeWebSocket } from '@hono/node-ws';
+import type { WSContext } from 'hono/ws';
+import type WebSocket from 'ws';
+import { iife, writableIterator } from './utils.js';
+import { MemorySaver } from '@langchain/langgraph';
+import { HumanMessage } from '@langchain/core/messages';
+import { tool } from '@langchain/core/tools';
+import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+import { INWORLD_TTS_SYSTEM_PROMPT, InworldTTS } from './inworld/index.js';
+import { AssemblyAISTT } from './assemblyai/index.js';
+import type { VoiceAgentEvent } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load .env from project root
-dotenv.config({ path: path.join(__dirname, "../.env") });
-const STATIC_DIR = path.join(__dirname, "../src/frontend/dist");
-const PORT = parseInt(process.env.PORT ?? "8000");
+dotenv.config({ path: path.join(__dirname, '../.env') });
+const STATIC_DIR = path.join(__dirname, '../src/frontend/dist');
+const PORT = parseInt(process.env.PORT ?? '8000');
 
 if (!existsSync(STATIC_DIR)) {
   console.error(
@@ -39,14 +39,14 @@ if (!existsSync(STATIC_DIR)) {
 const app = new Hono();
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
-app.use("/*", cors());
+app.use('/*', cors());
 
 const addToOrder = tool(
   async ({ item, quantity }) => {
     return `Added ${quantity} x ${item} to the order.`;
   },
   {
-    name: "add_to_order",
+    name: 'add_to_order',
     description: "Add an item to the customer's sandwich order.",
     schema: z.object({
       item: z.string(),
@@ -60,10 +60,10 @@ const confirmOrder = tool(
     return `Order confirmed: ${orderSummary}. Sending to kitchen.`;
   },
   {
-    name: "confirm_order",
-    description: "Confirm the final order with the customer.",
+    name: 'confirm_order',
+    description: 'Confirm the final order with the customer.',
     schema: z.object({
-      orderSummary: z.string().describe("Summary of the order"),
+      orderSummary: z.string().describe('Summary of the order'),
     }),
   }
 );
@@ -80,7 +80,7 @@ ${INWORLD_TTS_SYSTEM_PROMPT}
 `;
 
 const agent = createAgent({
-  model: "claude-haiku-4-5",
+  model: 'claude-haiku-4-5',
   tools: [addToOrder, confirmOrder],
   checkpointer: new MemorySaver(),
   systemPrompt: systemPrompt,
@@ -166,21 +166,21 @@ async function* agentStream(
 
   for await (const event of eventStream) {
     yield event;
-    if (event.type === "stt_output") {
+    if (event.type === 'stt_output') {
       const stream = await agent.stream(
         { messages: [new HumanMessage(event.transcript)] },
         {
           configurable: { thread_id: threadId },
-          streamMode: "messages",
+          streamMode: 'messages',
         }
       );
 
       for await (const [message] of stream) {
         if (AIMessage.isInstance(message) && message.tool_calls) {
-          yield { type: "agent_chunk", text: message.text, ts: Date.now() };
+          yield { type: 'agent_chunk', text: message.text, ts: Date.now() };
           for (const toolCall of message.tool_calls) {
             yield {
-              type: "tool_call",
+              type: 'tool_call',
               id: toolCall.id ?? uuidv4(),
               name: toolCall.name,
               args: toolCall.args,
@@ -190,11 +190,11 @@ async function* agentStream(
         }
         if (ToolMessage.isInstance(message)) {
           yield {
-            type: "tool_result",
-            toolCallId: message.tool_call_id ?? "",
-            name: message.name ?? "unknown",
+            type: 'tool_result',
+            toolCallId: message.tool_call_id ?? '',
+            name: message.name ?? 'unknown',
             result:
-              typeof message.content === "string"
+              typeof message.content === 'string'
                 ? message.content
                 : JSON.stringify(message.content),
             ts: Date.now(),
@@ -203,7 +203,7 @@ async function* agentStream(
       }
 
       // Signal that the agent has finished responding for this turn
-      yield { type: "agent_end", ts: Date.now() };
+      yield { type: 'agent_end', ts: Date.now() };
     }
   }
 }
@@ -228,9 +228,11 @@ async function* ttsStream(
   eventStream: AsyncIterable<VoiceAgentEvent>,
   existingTts?: InworldTTS
 ): AsyncGenerator<VoiceAgentEvent> {
-  const tts = existingTts ?? new InworldTTS({
-    voiceId: "Ashley",
-  });
+  const tts =
+    existingTts ??
+    new InworldTTS({
+      voiceId: 'Ashley',
+    });
   const passthrough = writableIterator<VoiceAgentEvent>();
 
   /**
@@ -248,12 +250,12 @@ async function* ttsStream(
         // Pass through all events to downstream consumers
         passthrough.push(event);
         // Send agent text chunks to Inworld for synthesis
-        if (event.type === "agent_chunk") {
+        if (event.type === 'agent_chunk') {
           buffer.push(event.text);
         }
         // Send all buffered text to Inworld for synthesis
-        if (event.type === "agent_end") {
-          await tts.sendText(buffer.join(""));
+        if (event.type === 'agent_end') {
+          await tts.sendText(buffer.join(''));
           buffer = [];
         }
       }
@@ -284,15 +286,15 @@ async function* ttsStream(
   }
 }
 
-app.get("/*", serveStatic({ root: STATIC_DIR }));
+app.get('/*', serveStatic({ root: STATIC_DIR }));
 
 app.get(
-  "/ws",
+  '/ws',
   upgradeWebSocket(async () => {
     let currentSocket: WSContext<WebSocket> | undefined;
 
     // Create TTS instance early for warmup
-    const tts = new InworldTTS({ voiceId: "Ashley" });
+    const tts = new InworldTTS({ voiceId: 'Ashley' });
 
     // Create a writable stream for incoming WebSocket audio data
     const inputStream = writableIterator<Uint8Array>();
@@ -320,10 +322,10 @@ app.get(
         const data = event.data;
 
         // Handle text messages (ping for warmup)
-        if (typeof data === "string") {
+        if (typeof data === 'string') {
           try {
             const message = JSON.parse(data);
-            if (message.type === "ping") {
+            if (message.type === 'ping') {
               tts.warmup().catch(console.error);
               return;
             }

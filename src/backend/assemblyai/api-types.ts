@@ -1,7 +1,7 @@
 /**
  * Audio encoding formats supported by AssemblyAI streaming API
  */
-export type AssemblyAIEncoding = "pcm_s16le" | "pcm_mulaw";
+export type AssemblyAIEncoding = 'pcm_s16le' | 'pcm_mulaw';
 
 /**
  * Speech model options for AssemblyAI streaming
@@ -9,15 +9,15 @@ export type AssemblyAIEncoding = "pcm_s16le" | "pcm_mulaw";
  * - universal-streaming-multi: Multilingual (English, Spanish, French, German, Italian, Portuguese)
  */
 export type AssemblyAISpeechModel =
-  | "universal-streaming-english"
-  | "universal-streaming-multi";
+  | 'universal-streaming-english'
+  | 'universal-streaming-multi';
 
 /**
  * Region options for AssemblyAI streaming API
  * - us: US endpoint (default) - streaming.assemblyai.com
  * - eu: EU endpoint - streaming.eu.assemblyai.com
  */
-export type AssemblyAIRegion = "us" | "eu";
+export type AssemblyAIRegion = 'us' | 'eu';
 
 /**
  * Word-level transcription data
@@ -58,10 +58,10 @@ export interface AssemblyAITurnEvent {
  */
 export namespace AssemblyAISTTMessage {
   export enum Type {
-    Begin = "Begin",
-    Turn = "Turn",
-    Termination = "Termination",
-    Error = "Error",
+    Begin = 'Begin',
+    Turn = 'Turn',
+    Termination = 'Termination',
+    Error = 'Error',
   }
 
   /**

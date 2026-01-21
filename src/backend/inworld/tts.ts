@@ -1,12 +1,12 @@
-import WebSocket from "ws";
-import { writableIterator } from "../utils.js";
+import WebSocket from 'ws';
+import { writableIterator } from '../utils.js';
 import type {
   InworldCreateMessage,
   InworldSendTextMessage,
   InworldCloseContextMessage,
   InworldTTSResponse,
-} from "./api-types.js";
-import type { VoiceAgentEvent } from "../types.js";
+} from './api-types.js';
+import type { VoiceAgentEvent } from '../types.js';
 
 interface InworldTTSOptions {
   apiKey?: string;
@@ -40,18 +40,18 @@ export class InworldTTS {
     }
 
     this._connectionPromise = new Promise((resolve, reject) => {
-      const url = "wss://api.inworld.ai/tts/v1/voice:streamBidirectional";
+      const url = 'wss://api.inworld.ai/tts/v1/voice:streamBidirectional';
       const ws = new WebSocket(url, {
         headers: {
           Authorization: `Basic ${this.apiKey}`,
         },
       });
 
-      ws.on("open", () => {
+      ws.on('open', () => {
         resolve(ws);
       });
 
-      ws.on("message", (data: WebSocket.RawData) => {
+      ws.on('message', (data: WebSocket.RawData) => {
         try {
           const message: InworldTTSResponse = JSON.parse(data.toString());
 
@@ -65,13 +65,13 @@ export class InworldTTS {
           const audioContent = message.result?.audioChunk?.audioContent;
           if (audioContent) {
             // Decode base64 to check for WAV header
-            const audioBuffer = Buffer.from(audioContent, "base64");
+            const audioBuffer = Buffer.from(audioContent, 'base64');
 
             // Strip WAV header if present (44 bytes starting with "RIFF")
             let pcmData: Buffer;
             if (
               audioBuffer.length > 44 &&
-              audioBuffer.subarray(0, 4).toString() === "RIFF"
+              audioBuffer.subarray(0, 4).toString() === 'RIFF'
             ) {
               pcmData = audioBuffer.subarray(44);
             } else {
@@ -80,8 +80,8 @@ export class InworldTTS {
 
             // Re-encode to base64 and push
             this._bufferIterator.push({
-              type: "tts_chunk",
-              audio: pcmData.toString("base64"),
+              type: 'tts_chunk',
+              audio: pcmData.toString('base64'),
               ts: Date.now(),
             });
           }
@@ -91,16 +91,16 @@ export class InworldTTS {
             // Context is closed, ready for next request
           }
         } catch (error) {
-          console.error("Inworld JSON parse error:", error);
+          console.error('Inworld JSON parse error:', error);
         }
       });
 
-      ws.on("error", (error) => {
+      ws.on('error', (error) => {
         this._bufferIterator.cancel();
         reject(error);
       });
 
-      ws.on("close", () => {
+      ws.on('close', () => {
         this._connectionPromise = null;
       });
     });
@@ -109,12 +109,12 @@ export class InworldTTS {
   }
 
   constructor(options: InworldTTSOptions = {}) {
-    this.apiKey = options.apiKey ?? process.env.INWORLD_API_KEY ?? "";
+    this.apiKey = options.apiKey ?? process.env.INWORLD_API_KEY ?? '';
     if (!this.apiKey) {
-      throw new Error("Inworld API key is required");
+      throw new Error('Inworld API key is required');
     }
-    this.voiceId = options.voiceId ?? "Ashley";
-    this.modelId = options.modelId ?? "inworld-tts-1";
+    this.voiceId = options.voiceId ?? 'Ashley';
+    this.modelId = options.modelId ?? 'inworld-tts-1';
     this.sampleRate = options.sampleRate ?? 24000;
   }
 
@@ -134,7 +134,7 @@ export class InworldTTS {
           voice_id: this.voiceId,
           model_id: this.modelId,
           audio_config: {
-            audio_encoding: "LINEAR16",
+            audio_encoding: 'LINEAR16',
             sample_rate_hertz: this.sampleRate,
           },
         },

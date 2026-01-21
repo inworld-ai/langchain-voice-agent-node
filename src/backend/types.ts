@@ -26,7 +26,7 @@ export namespace VoiceAgentEvent {
    * in PCM format (16-bit, mono, 16kHz) for optimal processing by the STT stage.
    */
   export interface UserInput extends BaseEvent {
-    readonly type: "user_input";
+    readonly type: 'user_input';
 
     /**
      * Raw PCM audio bytes from the user's microphone.
@@ -43,7 +43,7 @@ export namespace VoiceAgentEvent {
    * improving perceived responsiveness even before the final transcript is ready.
    */
   export interface STTChunk extends BaseEvent {
-    readonly type: "stt_chunk";
+    readonly type: 'stt_chunk';
 
     /**
      * Partial transcript text from the STT service.
@@ -61,7 +61,7 @@ export namespace VoiceAgentEvent {
    * be sent to the agent for processing.
    */
   export interface STTOutput extends BaseEvent {
-    readonly type: "stt_output";
+    readonly type: 'stt_output';
 
     /**
      * Final, complete transcript of the user's speech for this turn.
@@ -88,7 +88,7 @@ export namespace VoiceAgentEvent {
    * reducing overall latency.
    */
   export interface AgentChunk extends BaseEvent {
-    readonly type: "agent_chunk";
+    readonly type: 'agent_chunk';
 
     /**
      * Partial text chunk from the agent's streaming response.
@@ -104,7 +104,7 @@ export namespace VoiceAgentEvent {
    * for this turn and they should flush any buffered content.
    */
   export interface AgentEnd extends BaseEvent {
-    readonly type: "agent_end";
+    readonly type: 'agent_end';
   }
 
   /**
@@ -114,7 +114,7 @@ export namespace VoiceAgentEvent {
    * showing which tools are being called and with what arguments.
    */
   export interface ToolCall extends BaseEvent {
-    readonly type: "tool_call";
+    readonly type: 'tool_call';
 
     /**
      * Unique identifier for this tool invocation.
@@ -139,7 +139,7 @@ export namespace VoiceAgentEvent {
    * the full tool execution lifecycle.
    */
   export interface ToolResult extends BaseEvent {
-    readonly type: "tool_result";
+    readonly type: 'tool_result';
 
     /**
      * The tool call ID this result corresponds to.
@@ -177,7 +177,7 @@ export namespace VoiceAgentEvent {
    * significantly improves perceived responsiveness.
    */
   export interface TTSChunk extends BaseEvent {
-    readonly type: "tts_chunk";
+    readonly type: 'tts_chunk';
 
     /**
      * PCM audio bytes encoded as base64 string synthesized from the agent's

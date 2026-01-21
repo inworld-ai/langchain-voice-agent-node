@@ -1,7 +1,7 @@
-import WebSocket from "ws";
-import { writableIterator } from "../utils.js";
-import type { AssemblyAISTTMessage } from "./api-types.js";
-import type { VoiceAgentEvent } from "../types.js";
+import WebSocket from 'ws';
+import { writableIterator } from '../utils.js';
+import type { AssemblyAISTTMessage } from './api-types.js';
+import type { VoiceAgentEvent } from '../types.js';
 
 interface AssemblyAISTTOptions {
   apiKey?: string;
@@ -31,8 +31,10 @@ export class AssemblyAISTT {
       const params = new URLSearchParams({
         sample_rate: this.sampleRate.toString(),
         format_turns: this.formatTurns.toString().toLowerCase(),
-        end_of_turn_confidence_threshold: this.endOfTurnConfidenceThreshold.toString(),
-        min_end_of_turn_silence_when_confident: this.minEndOfTurnSilenceWhenConfident.toString(),
+        end_of_turn_confidence_threshold:
+          this.endOfTurnConfidenceThreshold.toString(),
+        min_end_of_turn_silence_when_confident:
+          this.minEndOfTurnSilenceWhenConfident.toString(),
         max_turn_silence: this.maxTurnSilence.toString(),
       });
 
@@ -41,26 +43,34 @@ export class AssemblyAISTT {
         headers: { Authorization: this.apiKey },
       });
 
-      ws.on("open", () => {
+      ws.on('open', () => {
         resolve(ws);
       });
 
-      ws.on("message", (data: WebSocket.RawData) => {
+      ws.on('message', (data: WebSocket.RawData) => {
         try {
           const message: AssemblyAISTTMessage = JSON.parse(data.toString());
-          if (message.type === "Begin") {
+          if (message.type === 'Begin') {
             // no-op
-          } else if (message.type === "Turn") {
+          } else if (message.type === 'Turn') {
             if (message.turn_is_formatted) {
               if (message.transcript) {
-                this._bufferIterator.push({ type: "stt_output", transcript: message.transcript, ts: Date.now() });
+                this._bufferIterator.push({
+                  type: 'stt_output',
+                  transcript: message.transcript,
+                  ts: Date.now(),
+                });
               }
             } else {
-              this._bufferIterator.push({ type: "stt_chunk", transcript: message.transcript, ts: Date.now() });
+              this._bufferIterator.push({
+                type: 'stt_chunk',
+                transcript: message.transcript,
+                ts: Date.now(),
+              });
             }
-          } else if (message.type === "Termination") {
+          } else if (message.type === 'Termination') {
             // no-op
-          } else if (message.type === "Error") {
+          } else if (message.type === 'Error') {
             throw new Error(message.error);
           }
         } catch (error) {
@@ -69,12 +79,12 @@ export class AssemblyAISTT {
         }
       });
 
-      ws.on("error", (error) => {
+      ws.on('error', (error) => {
         this._bufferIterator.cancel();
         reject(error);
       });
 
-      ws.on("close", () => {
+      ws.on('close', () => {
         this._connectionPromise = null;
       });
     });
@@ -83,15 +93,17 @@ export class AssemblyAISTT {
   }
 
   constructor(options: AssemblyAISTTOptions) {
-    this.apiKey = options.apiKey || process.env.ASSEMBLYAI_API_KEY || "";
+    this.apiKey = options.apiKey || process.env.ASSEMBLYAI_API_KEY || '';
     this.sampleRate = options.sampleRate || 16000;
     this.formatTurns = options.formatTurns ?? true;
-    this.endOfTurnConfidenceThreshold = options.endOfTurnConfidenceThreshold ?? 0.4;
-    this.minEndOfTurnSilenceWhenConfident = options.minEndOfTurnSilenceWhenConfident ?? 400;
+    this.endOfTurnConfidenceThreshold =
+      options.endOfTurnConfidenceThreshold ?? 0.4;
+    this.minEndOfTurnSilenceWhenConfident =
+      options.minEndOfTurnSilenceWhenConfident ?? 400;
     this.maxTurnSilence = options.maxTurnSilence ?? 800;
 
     if (!this.apiKey) {
-      throw new Error("AssemblyAI API key is required");
+      throw new Error('AssemblyAI API key is required');
     }
   }
 
