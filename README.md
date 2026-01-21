@@ -1,84 +1,99 @@
-# Inworld Template
+# LangChain Voice Agent
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Powered by Inworld AI](https://img.shields.io/badge/Powered_by-Inworld_AI-orange)](https://inworld.ai/runtime)
-[![Documentation](https://img.shields.io/badge/Documentation-Read_Docs-blue)](https://docs.inworld.ai/docs/node/overview)
-[![Model Providers](https://img.shields.io/badge/Model_Providers-See_Models-purple)](https://docs.inworld.ai/docs/models#llm)
+[![Powered by Inworld AI TTS](https://img.shields.io/badge/Powered_by-Inworld_AI-orange)](https://inworld.ai/tts)
+[![LangChain](https://img.shields.io/badge/LangChain-Agents-blue)](https://langchain.com/)
 
-A brief description of what this template does and its primary use case.
-
-[Insert product screenshot]
+A real-time voice-to-voice AI agent built with LangChain, AssemblyAI for speech-to-text, and Inworld for text-to-speech. As we're illustrating the "voice agent sandwich" of STT -> LLM -> TTS, our example scenario is also one where you can order a sandwich.
 
 ## Prerequisites
 
-- Node.js (v20 or higher)
-- npm
-- An Inworld AI account and API key
+- Node.js v20 or higher
+- npm v9 or higher
+
+### API Keys
+
+| Service | Environment Variable | Purpose | Get Key |
+|---------|---------------------|---------|---------|
+| Anthropic | `ANTHROPIC_API_KEY` | Claude LLM | [console.anthropic.com](https://console.anthropic.com/) |
+| AssemblyAI | `ASSEMBLYAI_API_KEY` | Speech-to-Text | [assemblyai.com](https://www.assemblyai.com/) |
+| Inworld | `INWORLD_API_KEY` | Text-to-Speech | [platform.inworld.ai](https://platform.inworld.ai/) |
 
 ## Get Started
 
-### Step 1: Clone the Repository
+### Step 1: Clone and Install
 
 ```bash
 git clone <repository-url>
-cd inworld-template
-```
-
-### Step 2: Install Dependencies
-
-```bash
+cd langchain-voice-agent-node
 npm install
 ```
 
-### Step 3: Configure Environment Variables
-
-Create a `.env` file in the root directory:
+### Step 2: Configure Environment
 
 ```bash
-INWORLD_API_KEY=your_api_key_here
+cp .env.example .env
+# Edit .env and add your API keys
 ```
 
-Get your API key from the [Inworld Portal](https://platform.inworld.ai/).
-
-### Step 4: Run the Application
-
-**For development** (with auto-reload on file changes):
-
-```bash
-npm run dev
-```
-
-**For production**:
+### Step 3: Build and Run
 
 ```bash
 npm run build
 npm start
 ```
 
-## Repo Structure
+Click the link in the terminal (`http://localhost:8000`) to open the app. Click "Start Conversation" to begin speaking with the agent.
+
+## Development
+
+For development with hot reload:
+
+```bash
+npm run dev
+```
+
+## Project Structure
 
 ```
-inworld-template/
-├── src/              # Source code
-├── public/           # Static assets
-├── README.md         # Documentation
-├── package.json      # Dependencies
-└── LICENSE           # MIT License
+langchain-voice-agent-node/
+├── src/
+│   ├── backend/              # Node.js + Hono server
+│   │   ├── index.ts          # Server & WebSocket pipeline
+│   │   ├── types.ts          # Event type definitions
+│   │   ├── utils.ts          # Async iterator utilities
+│   │   ├── assemblyai/       # AssemblyAI STT client
+│   │   │   ├── index.ts
+│   │   │   ├── api-types.ts
+│   │   │   └── stt.ts
+│   │   └── inworld/          # Inworld TTS client
+│   │       ├── index.ts
+│   │       ├── api-types.ts
+│   │       ├── prompts.ts
+│   │       └── tts.ts
+│   └── frontend/             # Svelte web app
+│       ├── package.json
+│       ├── vite.config.ts
+│       └── src/
+├── package.json
+├── tsconfig.json
+└── .env.example
 ```
 
-## Architecture
+## npm Scripts
 
-[Insert architecture diagram if it exists]
-
-## Troubleshooting
-
-**Bug Reports**: [GitHub Issues](https://github.com/inworld/inworld-template/issues)
-
-**General Questions**: For general inquiries and support, please email us at support@inworld.ai
+| Command | Purpose |
+|---------|---------|
+| `npm install` | Install all dependencies (root + frontend workspace) |
+| `npm run build` | Build frontend, then compile backend |
+| `npm start` | Run server on :8000 |
+| `npm run dev` | Build frontend + run backend with hot-reload |
+| `npm run lint` | Run ESLint on backend code |
+| `npm run type-check` | TypeScript type checking |
 
 ## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 

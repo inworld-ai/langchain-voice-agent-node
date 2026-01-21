@@ -40,7 +40,7 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**', '*.js', '*.config.js'],
+    ignores: ['dist/**', 'node_modules/**', 'src/frontend/**', '*.js', '*.config.js'],
   },
 ];
 
