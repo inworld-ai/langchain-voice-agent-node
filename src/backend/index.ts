@@ -321,10 +321,14 @@ app.get(
       onMessage(event) {
         const data = event.data;
 
-        // Handle text messages (ping for warmup)
+        // Handle text messages (config and ping)
         if (typeof data === 'string') {
           try {
             const message = JSON.parse(data);
+            if (message.type === 'config' && message.voiceId) {
+              tts.voiceId = message.voiceId;
+              return;
+            }
             if (message.type === 'ping') {
               tts.warmup().catch(console.error);
               return;

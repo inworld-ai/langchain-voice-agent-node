@@ -7,6 +7,7 @@ import {
   activities,
   logs,
   audioPlaying,
+  selectedVoice,
 } from "./stores";
 import { createAudioCapture, createAudioPlayback } from "./audio";
 import { get } from "svelte/store";
@@ -125,6 +126,10 @@ export function createVoiceSession(): VoiceSession {
     ws.binaryType = "arraybuffer";
 
     ws.onopen = async () => {
+      // Send voice config before triggering warmup
+      const voiceId = get(selectedVoice);
+      ws.send(JSON.stringify({ type: "config", voiceId }));
+
       // Send ping to trigger TTS warmup immediately
       ws.send(JSON.stringify({ type: "ping" }));
 
