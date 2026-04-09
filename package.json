@@ -18,7 +18,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.6",
+    "@hono/node-server": "^1.19.13",
     "@hono/node-ws": "^1.2.0",
     "@langchain/anthropic": "^1.2.1",
     "@langchain/core": "^1.1.0",
